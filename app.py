@@ -57,29 +57,27 @@ def split_audio(audio_path, chunk_length_sec=600):
     return chunks, temp_dir
 
 # Function to generate summary using Qwen model
+
 def generate_summary(text):
     prompt = (
-        "You are an expert summarizer. Summarize the following meeting transcript in 3-5 sentences, focusing on key points, decisions, and action items:\n\n"
+        "You are an expert summarizer. Summarize the following meeting transcript in 3-5 sentences, "
+        "focusing on key points, decisions, and action items:\n\n"
         f"{text}"
     )
-    headers = {
-        "Authorization": f"Bearer {QWEN_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "model": "qwen/qwen-2.5-72b-instruct:free",
-        "prompt": prompt,
-        "max_tokens": 300,
-        "temperature": 0.7
-    }
     try:
-        response = requests.post(QWEN_API_URL, json=payload, headers=headers)
-        response.raise_for_status()
-        summary = response.json().get("choices", [{}])[0].get("text", "").strip()
+        response = client_openrouter.chat.completions.create(
+            model="qwen/qwen-2.5-72b-instruct:free",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=300,
+            temperature=0.7
+        )
+        summary = response.choices[0].message.content.strip()
         return summary
-    except requests.RequestException as e:
+    except Exception as e:
         st.error(f"Failed to generate summary: {e}")
         return "Summary generation failed."
+
+
 # Main processing
 if uploaded_file:
     st.success(f"Uploaded: {uploaded_file.name}")
