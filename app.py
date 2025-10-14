@@ -58,18 +58,25 @@ def split_audio(audio_path, chunk_length_sec=600):
 
 # Function to generate summary using Qwen model
 
+# Function to generate summary using Qwen model via OpenRouter
 def generate_summary(text):
     prompt = (
-        "You are an expert summarizer. Summarize the following meeting transcript in 3-5 sentences, "
-        "focusing on key points, decisions, and action items:\n\n"
+        "You are an expert summarizer. Generate a point-wise summary of the following meeting transcript "
+        "using markdown bullet points. Structure it as:\n"
+        "- **Primary Focus**: [Main topic in 1 sentence].\n"
+        "- **Key Decisions/Additions**: [Bullet sub-points for decisions, e.g., new programs].\n"
+        "- **Discussions/Plans**: [Bullet sub-points for other topics, e.g., website features].\n"
+        "- **Action Items**: [Bullet sub-points for tasks, owners if mentioned, deadlines].\n"
+        "- **Next Steps**: [Any follow-ups, e.g., meetings].\n\n"
+        "Keep each bullet focused and concise (1-2 sentences max). Transcript:\n\n"
         f"{text}"
     )
     try:
         response = client_openrouter.chat.completions.create(
             model="qwen/qwen-2.5-72b-instruct:free",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=300,
-            temperature=0.7
+            max_tokens=400,  # Increased slightly for structured output
+            temperature=0.5  # Lowered for more consistent structure
         )
         summary = response.choices[0].message.content.strip()
         return summary
