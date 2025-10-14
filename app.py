@@ -136,8 +136,8 @@ if uploaded_file:
     st.subheader("📝 Translated English Text")
     st.text_area("Translation", full_translation.strip(), height=300)
 
-if full_translation.strip():
-    with st.spinner("Generating summary..."):
-        summary = generate_summary(full_translation)
-        st.subheader("📋 Meeting Summary")
-        st.text_area("Summary", summary, height=150)    
+    if full_translation.strip():
+        with st.spinner("Generating summary..."):
+            summary = generate_summary(full_translation)
+            st.subheader("📋 Meeting Summary")
+            st.text_area("Summary", summary, height=150)    
