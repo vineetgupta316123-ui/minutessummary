@@ -6,8 +6,6 @@ import subprocess
 import shutil
 
 
-
-
 # Load API keys from secrets
 openai_api_key = st.secrets.get('OPENAI_API_KEY')
 if not openai_api_key:
